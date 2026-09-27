@@ -8,6 +8,7 @@
   --border: #e4e4e7;
   --accent: #4f46e5;
   --accent-foreground: #ffffff;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -22,17 +23,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0b0d;
-    --foreground: #ededed;
-    --card: #16161a;
-    --muted: #a1a1aa;
-    --border: #27272a;
-    --accent: #818cf8;
-    --accent-foreground: #0b0b0d;
-  }
-}
 
 body {
   background: var(--background);

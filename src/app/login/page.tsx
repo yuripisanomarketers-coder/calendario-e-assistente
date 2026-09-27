@@ -16,7 +16,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <h1 className="text-xl font-semibold">Calendario e Assistente</h1>
         <p className="mt-2 text-sm text-muted">Area privata. Accedi con il tuo account Google.</p>
         {message && (
-          <p className="mt-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-400">
+          <p className="mt-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600">
             {message}
           </p>
         )}

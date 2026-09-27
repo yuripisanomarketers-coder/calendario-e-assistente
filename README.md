@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Calendario e Assistente
 
-## Getting Started
+App web personale (accesso riservato a una sola email) che riunisce:
 
-First, run the development server:
+- **Google Calendar**: agenda dei prossimi 7 giorni
+- **Gmail**: email non lette
+- **Slack**: messaggi recenti
+- **Assistente AI (Claude)**: legge e gestisce calendario, email e Slack su richiesta. Prima di inviare
+  messaggi o creare/modificare/eliminare eventi mostra cosa farà e aspetta la tua conferma.
+
+Stack: Next.js 16 (App Router), Tailwind CSS 4, Anthropic SDK. Nessun database: la sessione
+(con i token Google) è salvata in un cookie cifrato.
+
+## Configurazione
+
+Copia `.env.example` in `.env.local` e compila i valori.
+
+### 1. Google (login + Calendar + Gmail)
+
+1. Vai su [Google Cloud Console](https://console.cloud.google.com/) e crea un progetto.
+2. **API e servizi → Libreria**: abilita **Google Calendar API** e **Gmail API**.
+3. **API e servizi → Schermata consenso OAuth**: tipo "Esterno", aggiungi la tua email come
+   utente di test.
+   - Finché l'app è in modalità "Test", Google fa scadere l'accesso ogni 7 giorni (dovrai
+     rifare il login). Per evitarlo, clicca **Pubblica app**: per uso personale non serve la
+     verifica; al login vedrai un avviso "app non verificata" che puoi superare con
+     *Avanzate → Continua*.
+4. **API e servizi → Credenziali → Crea credenziali → ID client OAuth** (tipo "Applicazione web"):
+   - URI di reindirizzamento autorizzati: `http://localhost:3000/api/auth/callback` e, quando
+     l'app è online, `https://TUO-DOMINIO/api/auth/callback`.
+5. Copia Client ID e Client secret in `GOOGLE_CLIENT_ID` e `GOOGLE_CLIENT_SECRET`.
+6. Imposta `ALLOWED_EMAIL` con la tua email Google: qualsiasi altro account viene rifiutato.
+7. Genera `SESSION_SECRET` con `openssl rand -base64 32`.
+
+### 2. Assistente AI
+
+Crea una chiave su [console.anthropic.com](https://console.anthropic.com/) e mettila in
+`ANTHROPIC_API_KEY`. Il modello usato è `claude-opus-5` (vedi `src/lib/assistant.ts`).
+
+### 3. Slack (facoltativo)
+
+1. Vai su [api.slack.com/apps](https://api.slack.com/apps) → **Create New App → From scratch**,
+   scegli il tuo workspace.
+2. **OAuth & Permissions → User Token Scopes**, aggiungi:
+   `channels:read`, `channels:history`, `groups:read`, `groups:history`, `im:read`, `im:history`,
+   `mpim:read`, `mpim:history`, `search:read`, `users:read`, `chat:write`.
+3. **Install to Workspace**, poi copia lo **User OAuth Token** (`xoxp-...`) in `SLACK_USER_TOKEN`.
+
+I messaggi inviati dall'assistente partono a tuo nome.
+
+## Avvio in locale
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apri http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pubblicazione online (Vercel)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Importa la repository su [vercel.com](https://vercel.com/new).
+2. In **Settings → Environment Variables** inserisci le stesse variabili di `.env.local`, con
+   `APP_URL=https://TUO-DOMINIO.vercel.app`.
+3. Aggiungi `https://TUO-DOMINIO.vercel.app/api/auth/callback` agli URI di reindirizzamento su Google.
 
-## Learn More
+Le risposte dell'assistente possono richiedere qualche decina di secondi; la rotta
+`/api/chat` è configurata con `maxDuration = 300`.
 
-To learn more about Next.js, take a look at the following resources:
+## Struttura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  proxy.ts               # blocca tutte le pagine senza sessione valida
+  app/
+    page.tsx             # dashboard (agenda, email, Slack, chat)
+    login/page.tsx
+    api/auth/*           # login/callback/logout Google OAuth
+    api/chat/route.ts    # assistente AI
+  components/            # riquadri della dashboard e chat
+  lib/
+    session.ts           # cookie di sessione cifrato
+    google.ts            # OAuth, Calendar, Gmail
+    slack.ts             # Slack Web API
+    assistant.ts         # Claude + strumenti
+```

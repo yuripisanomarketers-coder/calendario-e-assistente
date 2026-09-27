@@ -88,24 +88,24 @@ export function Chat() {
   }
 
   return (
-    <section className="flex h-[70vh] flex-col rounded-2xl border border-border bg-card shadow-sm lg:h-[calc(100vh-7rem)]">
-      <div className="flex items-center justify-between border-b border-border px-5 py-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Assistente</h2>
+    <section className="flex h-full flex-col bg-white">
+      <div className="flex items-center justify-between px-4 pb-2 pt-3">
+        <h2 className="text-[15px] font-semibold">Assistente</h2>
         {messages.length > 0 && (
           <button
             type="button"
             onClick={() => setMessages([])}
-            className="text-xs text-muted hover:text-foreground"
+            className="text-[13px] text-system-blue hover:opacity-70"
           >
             Nuova chat
           </button>
         )}
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
+      <div className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-            <p className="text-sm text-muted">
+            <p className="text-sm text-label-secondary">
               Chiedimi del tuo calendario, delle email o di Slack.
             </p>
             <div className="flex flex-wrap justify-center gap-2">
@@ -114,7 +114,7 @@ export function Chat() {
                   key={suggestion}
                   type="button"
                   onClick={() => void send(suggestion)}
-                  className="rounded-full border border-border px-3 py-1.5 text-xs hover:bg-background"
+                  className="rounded-full bg-fill px-3 py-1.5 text-xs hover:bg-black/10"
                 >
                   {suggestion}
                 </button>
@@ -131,8 +131,8 @@ export function Chat() {
             <div
               className={
                 message.role === "user"
-                  ? "max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm bg-accent px-4 py-2 text-sm text-accent-foreground"
-                  : "max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-bl-sm bg-background px-4 py-2 text-sm"
+                  ? "max-w-[85%] whitespace-pre-wrap rounded-[18px] rounded-br-md bg-system-blue px-3.5 py-2 text-sm text-white"
+                  : "max-w-[85%] whitespace-pre-wrap rounded-[18px] rounded-bl-md bg-[#e9e9eb] px-3.5 py-2 text-sm"
               }
             >
               {message.content}
@@ -142,7 +142,7 @@ export function Chat() {
 
         {loading && (
           <div className="flex justify-start">
-            <div className="rounded-2xl rounded-bl-sm bg-background px-4 py-2 text-sm text-muted">
+            <div className="rounded-[18px] rounded-bl-md bg-[#e9e9eb] px-3.5 py-2 text-sm text-label-secondary">
               <span className="animate-pulse">Sto lavorando…</span>
             </div>
           </div>
@@ -151,26 +151,29 @@ export function Chat() {
       </div>
 
       {error && (
-        <p className="mx-5 mb-2 rounded-lg bg-red-500/10 px-3 py-2 text-xs text-red-600">
+        <p className="mx-4 mb-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-system-red">
           {error}
         </p>
       )}
 
-      <form onSubmit={onSubmit} className="flex items-end gap-2 border-t border-border p-3">
+      <form onSubmit={onSubmit} className="flex items-end gap-2 border-t border-separator p-3">
         <textarea
           value={input}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={onKeyDown}
           rows={1}
           placeholder="Scrivi un messaggio…"
-          className="max-h-40 min-h-10 flex-1 resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+          className="max-h-40 min-h-9 flex-1 resize-none rounded-[18px] border border-separator bg-white px-3.5 py-2 text-sm outline-none focus:border-system-blue"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="h-10 rounded-xl bg-accent px-4 text-sm font-medium text-accent-foreground transition hover:opacity-90 disabled:opacity-40"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-system-blue text-white transition hover:brightness-110 disabled:opacity-30"
         >
-          Invia
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <path d="M8 13V3M3.5 7.5L8 3l4.5 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span className="sr-only">Invia</span>
         </button>
       </form>
     </section>

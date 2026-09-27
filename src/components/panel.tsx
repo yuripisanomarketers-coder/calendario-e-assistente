@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+/** Sezione della barra laterale, stile elenco Apple. */
 export function Panel({
   title,
   action,
@@ -10,12 +11,12 @@ export function Panel({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">{title}</h2>
+    <section>
+      <div className="mb-1.5 flex items-center justify-between px-1">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wide text-label-secondary">{title}</h2>
         {action}
       </div>
-      {children}
+      <div className="rounded-xl bg-white px-3 py-1 shadow-[0_0_0_0.5px_rgba(0,0,0,0.06)]">{children}</div>
     </section>
   );
 }
@@ -23,9 +24,9 @@ export function Panel({
 export function PanelSkeleton({ title }: { title: string }) {
   return (
     <Panel title={title}>
-      <div className="space-y-2">
+      <div className="space-y-2 py-2">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="h-10 animate-pulse rounded-lg bg-border/60" />
+          <div key={i} className="h-8 animate-pulse rounded-md bg-fill" />
         ))}
       </div>
     </Panel>
@@ -33,5 +34,13 @@ export function PanelSkeleton({ title }: { title: string }) {
 }
 
 export function PanelMessage({ children }: { children: ReactNode }) {
-  return <p className="text-sm text-muted">{children}</p>;
+  return <p className="py-2 text-xs text-label-secondary">{children}</p>;
+}
+
+export function PanelLink({ href }: { href: string }) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className="text-[11px] text-system-blue hover:opacity-70">
+      Apri
+    </a>
+  );
 }

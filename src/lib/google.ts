@@ -135,6 +135,7 @@ export interface CalendarEvent {
   end: { dateTime?: string; date?: string; timeZone?: string };
   attendees?: { email: string; responseStatus?: string }[];
   hangoutLink?: string;
+  colorId?: string;
 }
 
 export async function listEvents(opts: {

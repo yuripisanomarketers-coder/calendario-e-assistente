@@ -11,18 +11,18 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const message = typeof error === "string" ? ERRORS[error] : undefined;
 
   return (
-    <main className="flex flex-1 items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
-        <h1 className="text-xl font-semibold">Calendario e Assistente</h1>
-        <p className="mt-2 text-sm text-muted">Area privata. Accedi con il tuo account Google.</p>
+    <main className="flex flex-1 items-center justify-center bg-sidebar px-4">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-[0_8px_40px_rgba(0,0,0,0.08)] ring-1 ring-black/5">
+        <h1 className="text-2xl font-semibold tracking-tight">Calendario e Assistente</h1>
+        <p className="mt-2 text-sm text-label-secondary">Area privata. Accedi con il tuo account Google.</p>
         {message && (
-          <p className="mt-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-600">
+          <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-system-red">
             {message}
           </p>
         )}
         <a
           href="/api/auth/login"
-          className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition hover:opacity-90"
+          className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-system-blue px-4 py-2.5 text-[15px] font-medium text-white transition hover:brightness-110"
         >
           Accedi con Google
         </a>

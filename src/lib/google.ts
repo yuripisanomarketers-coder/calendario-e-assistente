@@ -1,3 +1,4 @@
+import { demo } from "./demo";
 import { env } from "./env";
 import { getSession, saveSession, type Session } from "./session";
 
@@ -144,6 +145,7 @@ export async function listEvents(opts: {
   query?: string;
   maxResults?: number;
 }): Promise<CalendarEvent[]> {
+  if (env.demo) return demo.listEvents(opts);
   const params = new URLSearchParams({
     timeMin: opts.timeMin,
     timeMax: opts.timeMax,
@@ -180,21 +182,24 @@ function toEventBody(input: EventInput) {
   };
 }
 
-export function createEvent(input: EventInput) {
+export async function createEvent(input: EventInput): Promise<CalendarEvent> {
+  if (env.demo) return demo.createEvent(input);
   return googleFetch<CalendarEvent>(CAL, {
     method: "POST",
     body: JSON.stringify(toEventBody(input)),
   });
 }
 
-export function updateEvent(eventId: string, input: EventInput) {
+export async function updateEvent(eventId: string, input: EventInput): Promise<CalendarEvent> {
+  if (env.demo) return demo.updateEvent(eventId, input);
   return googleFetch<CalendarEvent>(`${CAL}/${encodeURIComponent(eventId)}`, {
     method: "PATCH",
     body: JSON.stringify(toEventBody(input)),
   });
 }
 
-export function deleteEvent(eventId: string) {
+export async function deleteEvent(eventId: string): Promise<void> {
+  if (env.demo) return demo.deleteEvent(eventId);
   return googleFetch<void>(`${CAL}/${encodeURIComponent(eventId)}`, {
     method: "DELETE",
   });
@@ -284,6 +289,7 @@ function toSummary(msg: GmailMessageRaw): EmailSummary {
 }
 
 export async function searchEmails(query: string, maxResults = 10): Promise<EmailSummary[]> {
+  if (env.demo) return demo.searchEmails(query, maxResults);
   const params = new URLSearchParams({ q: query, maxResults: String(maxResults) });
   const list = await googleFetch<{ messages?: { id: string }[] }>(`${GMAIL}/messages?${params}`);
   const ids = list.messages ?? [];
@@ -298,6 +304,7 @@ export async function searchEmails(query: string, maxResults = 10): Promise<Emai
 }
 
 export async function readEmail(id: string): Promise<EmailFull> {
+  if (env.demo) return demo.readEmail(id);
   const msg = await googleFetch<GmailMessageRaw>(
     `${GMAIL}/messages/${encodeURIComponent(id)}?format=full`,
   );
@@ -322,6 +329,7 @@ export async function sendEmail(input: {
   cc?: string;
   replyToMessageId?: string;
 }): Promise<{ id: string; threadId: string }> {
+  if (env.demo) return demo.sendEmail();
   let threadId: string | undefined;
   let inReplyTo: string | undefined;
   if (input.replyToMessageId) {

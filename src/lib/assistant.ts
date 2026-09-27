@@ -199,6 +199,9 @@ export interface ChatTurn {
 }
 
 export async function runAssistant(history: ChatTurn[]): Promise<string> {
+  if (env.demo && !process.env.ANTHROPIC_API_KEY) {
+    return "Sono in modalità demo senza chiave API, quindi non posso ancora rispondere davvero.\n\nAggiungi ANTHROPIC_API_KEY nel file .env.local e riavvia l'app: potrò leggere e modificare il calendario di esempio, le email e i messaggi Slack.";
+  }
   const now = new Date();
   const today = now.toLocaleString("it-IT", {
     timeZone: env.timeZone,

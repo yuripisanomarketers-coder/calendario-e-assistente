@@ -1,9 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { env } from "@/lib/env";
 import { SESSION_COOKIE, decryptSession } from "@/lib/session";
 
 const PUBLIC_PATHS = ["/login", "/api/auth/login", "/api/auth/callback"];
 
 export async function proxy(request: NextRequest) {
+  if (env.demo) return NextResponse.next();
   const { pathname } = request.nextUrl;
   if (PUBLIC_PATHS.includes(pathname)) return NextResponse.next();
 

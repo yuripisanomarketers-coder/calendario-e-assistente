@@ -54,7 +54,16 @@ export const sessionCookieOptions = {
   maxAge: SESSION_MAX_AGE,
 };
 
+const DEMO_SESSION: Session = {
+  email: "demo@localhost",
+  name: "Yuri",
+  refreshToken: "",
+  accessToken: "",
+  accessTokenExpiresAt: Number.MAX_SAFE_INTEGER,
+};
+
 export async function getSession(): Promise<Session | null> {
+  if (env.demo) return DEMO_SESSION;
   const store = await cookies();
   return decryptSession(store.get(SESSION_COOKIE)?.value);
 }

@@ -11,6 +11,17 @@ App web personale (accesso riservato a una sola email) che riunisce:
 Stack: Next.js 16 (App Router), Tailwind CSS 4, Anthropic SDK. Nessun database: la sessione
 (con i token Google) è salvata in un cookie cifrato.
 
+## Prova veloce (modalità demo)
+
+Per vedere l'app senza login e senza collegare nessun account:
+
+- **Mac**: doppio clic su `Avvia (Mac).command`
+- **Windows**: doppio clic su `Avvia (Windows).bat`
+
+Serve [Node.js](https://nodejs.org) (versione LTS). Al primo avvio viene creato `.env.local` con
+`DEMO=1` e si apre http://localhost:3000 con calendario, email e Slack di esempio. Per far
+rispondere l'assistente aggiungi `ANTHROPIC_API_KEY=...` in `.env.local` e riavvia.
+
 ## Configurazione
 
 Copia `.env.example` in `.env.local` e compila i valori.

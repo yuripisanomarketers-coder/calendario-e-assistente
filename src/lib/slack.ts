@@ -1,3 +1,4 @@
+import { demo } from "./demo";
 import { env } from "./env";
 
 export class SlackNotConfiguredError extends Error {
@@ -6,7 +7,7 @@ export class SlackNotConfiguredError extends Error {
   }
 }
 
-export const isSlackConfigured = () => Boolean(env.slackUserToken);
+export const isSlackConfigured = () => Boolean(env.demo || env.slackUserToken);
 
 interface SlackResponse {
   ok: boolean;
@@ -90,6 +91,7 @@ interface RawChannel {
 }
 
 export async function listChannels(): Promise<SlackChannel[]> {
+  if (env.demo) return demo.listChannels();
   const data = await slack<SlackResponse & { channels: RawChannel[] }>("users.conversations", {
     types: "public_channel,private_channel,im,mpim",
     exclude_archived: true,
@@ -140,6 +142,7 @@ export async function channelHistory(
   channel: string,
   opts: { limit?: number; oldest?: string } = {},
 ): Promise<SlackMessage[]> {
+  if (env.demo) return demo.channelHistory(channel);
   const data = await slack<SlackResponse & { messages: RawMessage[] }>("conversations.history", {
     channel,
     limit: opts.limit ?? 30,
@@ -149,6 +152,7 @@ export async function channelHistory(
 }
 
 export async function threadReplies(channel: string, ts: string): Promise<SlackMessage[]> {
+  if (env.demo) return [];
   const data = await slack<SlackResponse & { messages: RawMessage[] }>("conversations.replies", {
     channel,
     ts,
@@ -158,6 +162,7 @@ export async function threadReplies(channel: string, ts: string): Promise<SlackM
 }
 
 export async function searchMessages(query: string, count = 20): Promise<SlackMessage[]> {
+  if (env.demo) return demo.searchMessages(query);
   const data = await slack<SlackResponse & { messages: { matches: RawMessage[] } }>(
     "search.messages",
     { query, count, sort: "timestamp" },
@@ -166,6 +171,7 @@ export async function searchMessages(query: string, count = 20): Promise<SlackMe
 }
 
 export async function postMessage(channel: string, text: string, threadTs?: string) {
+  if (env.demo) return demo.postMessage(channel);
   const data = await slack<SlackResponse & { ts: string; channel: string }>(
     "chat.postMessage",
     { channel, text, thread_ts: threadTs },
@@ -176,6 +182,7 @@ export async function postMessage(channel: string, text: string, threadTs?: stri
 
 /** Messaggi recenti (ultimi giorni) scritti da altri, per la dashboard. */
 export async function recentMessagesFromOthers(days = 2, limit = 10): Promise<SlackMessage[]> {
+  if (env.demo) return demo.recentMessages(limit);
   const me = await slack<SlackResponse & { user_id: string }>("auth.test");
   const since = new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
   const data = await slack<SlackResponse & { messages: { matches: RawMessage[] } }>(

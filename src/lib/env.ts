@@ -7,6 +7,10 @@ function required(name: string): string {
 }
 
 export const env = {
+  /** Modalità demo: niente login e dati di esempio (vedi src/lib/demo.ts). */
+  get demo() {
+    return process.env.DEMO === "1";
+  },
   get googleClientId() {
     return required("GOOGLE_CLIENT_ID");
   },
